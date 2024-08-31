@@ -11,4 +11,5 @@ export default defineConfig({
   integrations: [icon(), tailwind(), preact()],
   output: "hybrid",
   adapter: vercel(),
+  outDir: "./dist"
 });
