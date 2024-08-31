@@ -1,13 +1,17 @@
 ---
 import "../styles/global.css";
-import { Icon } from "astro-icon/components";
+import Header from "../components/Header.astro";
+import Fotter from "../components/Fotter.astro";
 
 interface Props {
 	description?: string;
+	currentPage: string;
 }
 
-const { description = "A default description for your Astro site" } =
-	Astro.props;
+const {
+	description = "A default description for your Astro site",
+	currentPage,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -17,53 +21,16 @@ const { description = "A default description for your Astro site" } =
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
-		<title>My Astro Site</title>
+		<title>FantasyScoreboard</title>
 	</head>
 	<body class="font-sans text-gray-100 bg-gray-900 leading-normal">
 		<div class="flex">
-			<nav class="w-72 min-h-screen bg-gray-800 p-6">
-				<ul class="space-y-4">
-					<li>
-						<a
-							href="/"
-							class="flex items-center p-3 text-lg font-medium text-gray-300 rounded-lg hover:bg-gray-700 transition-all duration-300 ease-in-out transform hover:scale-105"
-						>
-							<Icon name="mdi:home" class="w-6 h-6 mr-3" />
-							Home
-						</a>
-					</li>
-					<li>
-						<a
-							href="/scoreboard"
-							class="flex items-center p-3 text-lg font-medium text-gray-300 rounded-lg hover:bg-gray-700 transition-all duration-300 ease-in-out transform hover:scale-105"
-						>
-							<Icon name="mdi:trophy" class="w-6 h-6 mr-3" />
-							Scoreboard
-						</a>
-					</li>
-					<li>
-						<a
-							href="/admin"
-							class="flex items-center p-3 text-lg font-medium text-gray-300 rounded-lg hover:bg-gray-700 transition-all duration-300 ease-in-out transform hover:scale-105"
-						>
-							<Icon name="mdi:account-cog" class="w-6 h-6 mr-3" />
-							Admin
-						</a>
-					</li>
-				</ul>
-			</nav>
-
 			<div class="flex-1 flex flex-col min-h-screen">
-				<main class="flex-1 p-6">
+				<Header />
+				<main class="flex-1 px-36">
 					<slot />
 				</main>
-
-				<footer class="text-center py-4 bg-gray-800 px-6">
-					<p>
-						&copy; {new Date().getFullYear()} My Astro Site. All rights
-						reserved.
-					</p>
-				</footer>
+				<Fotter />
 			</div>
 		</div>
 	</body>
