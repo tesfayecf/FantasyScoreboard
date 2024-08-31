@@ -19,7 +19,7 @@ const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 
 // Fetch the player data from the API
-let players: Player[] = [];
+let players: Player[] = data.players;
 if (AUTH_TOKEN !== "_undefined_") {
     try {
         const response = await fetch(`${baseUrl}${rankingEndpoint}`, {
@@ -34,7 +34,7 @@ if (AUTH_TOKEN !== "_undefined_") {
         }
 
         const data = await response.json();
-        players = data || []; // Adjust this depending on the actual structure of your response
+        players = data || data.players; // Adjust this depending on the actual structure of your response
     } catch (error) {
         console.error("Failed to fetch player data:", error);
     }
