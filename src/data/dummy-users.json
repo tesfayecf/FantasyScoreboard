@@ -1,0 +1,99 @@
+{
+    "players": [
+        {
+            "position": 1,
+            "previousPosition": 2,
+            "points": 120,
+            "team": {
+                "managerWarned": false,
+                "id": "team1",
+                "manager": {
+                    "id": "manager1",
+                    "managerName": "John Doe",
+                    "avatar": "https://randomuser.me/api/portraits/men/1.jpg"
+                },
+                "banned": false,
+                "teamValue": 1000000,
+                "teamPoints": 500,
+                "teamMoney": 10000,
+                "isAdmin": true
+            }
+        },
+        {
+            "position": 2,
+            "previousPosition": 1,
+            "points": 115,
+            "team": {
+                "managerWarned": true,
+                "id": "team2",
+                "manager": {
+                    "id": "manager2",
+                    "managerName": "Jane Smith",
+                    "avatar": "https://randomuser.me/api/portraits/women/2.jpg"
+                },
+                "banned": false,
+                "teamValue": 950000,
+                "teamPoints": 480,
+                "teamMoney": 8000,
+                "isAdmin": false
+            }
+        },
+        {
+            "position": 3,
+            "previousPosition": 4,
+            "points": 110,
+            "team": {
+                "managerWarned": false,
+                "id": "team3",
+                "manager": {
+                    "id": "manager3",
+                    "managerName": "Alice Johnson",
+                    "avatar": "https://randomuser.me/api/portraits/women/3.jpg"
+                },
+                "banned": false,
+                "teamValue": 920000,
+                "teamPoints": 450,
+                "teamMoney": null,
+                "isAdmin": false
+            }
+        },
+        {
+            "position": 4,
+            "previousPosition": 3,
+            "points": 105,
+            "team": {
+                "managerWarned": true,
+                "id": "team4",
+                "manager": {
+                    "id": "manager4",
+                    "managerName": "Bob Brown",
+                    "avatar": "https://randomuser.me/api/portraits/men/4.jpg"
+                },
+                "banned": true,
+                "teamValue": 890000,
+                "teamPoints": 430,
+                "teamMoney": 5000,
+                "isAdmin": false
+            }
+        },
+        {
+            "position": 5,
+            "previousPosition": 5,
+            "points": 100,
+            "team": {
+                "managerWarned": false,
+                "id": "team5",
+                "manager": {
+                    "id": "manager5",
+                    "managerName": "Charlie Davis",
+                    "avatar": "https://randomuser.me/api/portraits/men/5.jpg"
+                },
+                "banned": false,
+                "teamValue": 870000,
+                "teamPoints": 420,
+                "teamMoney": 7000,
+                "isAdmin": false
+            }
+        }
+    ]
+}

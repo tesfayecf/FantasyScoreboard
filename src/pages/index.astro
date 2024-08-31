@@ -2,6 +2,7 @@
 import fs from "fs";
 import Layout from "../layouts/Layout.astro";
 import Table from "../components/table/Table.astro";
+import data from "../data/dummy-users.json";
 
 // Define the base URL and endpoint
 const baseUrl = "https://api-fantasy.llt-services.com";
@@ -41,5 +42,5 @@ let players: Player[] = [];
 ---
 
 <Layout currentPage="index">
-    <Table players={players} />
+    <Table players={data.players} />
 </Layout>

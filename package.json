@@ -1,6 +1,6 @@
 {
-  "name": "fatasyscoreboard",
-  "type": "module",
+  "name": "fantasyscoreboard",
+  "type": "commonjs",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
