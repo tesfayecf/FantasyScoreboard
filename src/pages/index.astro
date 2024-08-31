@@ -1,0 +1,45 @@
+---
+import fs from "fs";
+import Layout from "../layouts/Layout.astro";
+import Table from "../components/table/Table.astro";
+
+// Define the base URL and endpoint
+const baseUrl = "https://api-fantasy.llt-services.com";
+
+const leagueId = "013805954";
+const rankingEndpoint = `/api/v5/leagues/${leagueId}/ranking`;
+
+const teamId = "17193364";
+const teamInfoEndpoint = `/api/v3/leagues/${leagueId}/teams/${teamId}`;
+
+const weekId = "1";
+const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
+
+// Read the bearer token from the text file (assuming it's in the root directory)
+const bearerToken = await fs.readFileSync("src/data/auth-token.txt");
+
+// Fetch the player data from the API
+let players: Player[] = [];
+
+// try {
+//     const response = await fetch(`${baseUrl}${rankingEndpoint}`, {
+//         headers: {
+//             Authorization: `Bearer ${bearerToken}`,
+//             "Content-Type": "application/json",
+//         },
+//     });
+
+//     if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     players = data || []; // Adjust this depending on the actual structure of your response
+// } catch (error) {
+//     console.error("Failed to fetch player data:", error);
+// }
+---
+
+<Layout currentPage="index">
+    <Table players={players} />
+</Layout>

@@ -1,0 +1,57 @@
+---
+import { undefined } from "astro:schema";
+
+interface Manager {
+    id: string;
+    managerName: string;
+    avatar: string;
+}
+
+interface Team {
+    managerWarned: boolean;
+    id: string;
+    manager: Manager;
+    banned: boolean;
+    teamValue: number;
+    teamPoints: number;
+    teamMoney?: number | null;
+    isAdmin: boolean;
+}
+
+interface Player {
+    position: number;
+    previousPosition: number;
+    points: number;
+    team: Team;
+}
+
+interface RowProps {
+    player: Player;
+}
+
+const { player } = Astro.props as RowProps;
+---
+
+<tr
+    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+>
+    <td
+        class="px-6 py-4 flex items-center text-gray-900 whitespace-nowrap dark:text-white"
+    >
+        <div class="text-base font-semibold">
+            {player.team.manager.managerName}
+        </div>
+    </td>
+    <td class="px-6 py-4">
+        <img
+            class="w-10 h-10 rounded-full"
+            src={"https://ll1prglcdn.azureedge.net/global-avatar/default.png"}
+            alt={`${player.team.manager.managerName} avatar`}
+        />
+    </td>
+    <td class="px-6 py-4">{player.position}</td>
+    <td class="px-6 py-4">{player.previousPosition}</td>
+    <td class="px-6 py-4">{player.points}</td>
+    <td class="px-6 py-4">{player.team.teamPoints}</td>
+    <td class="px-6 py-4">{player.team.teamValue.toLocaleString()}</td>
+</tr>

@@ -1,0 +1,9 @@
+---
+export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+import AdminForm from "../components/admin/AdminForm";
+---
+
+<Layout currentPage="admin">
+    <AdminForm client:visible />
+</Layout>
