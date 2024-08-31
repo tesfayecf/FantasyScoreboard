@@ -2,6 +2,7 @@ export const prerender = "false";
 import type { APIRoute } from "astro";
 
 import fs from "fs";
+import { createClient } from "@vercel/kv";
 
 
 function writeFile(path: string, contents: string, cb: fs.NoParamCallback) {
@@ -17,13 +18,32 @@ export const POST: APIRoute = async ({ request }) => {
         const formData = await request.formData();
         const token = formData.get("token");
 
-        // writeFile("./src/data/auth/auth-token.txt", token as string, () => console.log("Token saved succesfully"));
-        // Store the token in an environment variable
-        if (typeof token === "string") {
-            process.env.AUTH_TOKEN = token;
-            console.log("Token saved successfully in environment variable");
-        } else {
+        if (typeof token !== "string") {
             throw new Error("Token is not a valid string");
+        }
+
+        if (process.env.prduction) {
+            try {
+
+                const kv = createClient({
+                    url: process.env.KV_REST_API_URL,
+                    token: process.env.KV_REST_API_TOKEN,
+                });
+
+                kv.set("auth-token", token as string)
+                console.log("Token saved successfully");
+            } catch (e) {
+                throw new Error("Error storing the token");
+            }
+        } else {
+            writeFile(
+                "./src/data/auth/auth-token.txt",
+                JSON.stringify({ token }),
+                function (err) {
+                    if (err) throw err;
+                    console.log("Token saved successfully");
+                }
+            );
         }
 
         // Return a success response
