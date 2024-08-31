@@ -18,7 +18,7 @@ dependencies:
     specifier: 1.1.68
     version: 1.1.68
   '@vercel/kv':
-    specifier: ^2.0.0
+    specifier: 2.0.0
     version: 2.0.0
   astro:
     specifier: 4.15.1
