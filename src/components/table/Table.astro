@@ -1,17 +1,6 @@
 ---
 import Row from "./Row.astro";
 
-interface Player {
-    name: string;
-    imageUrl: string;
-    fantasyPosition: string;
-    customPosition: string;
-    fantasyPoints: number;
-    customPoints: number;
-    averagePoints: number;
-    lastPosition: number;
-}
-
 interface TableProps {
     players: Player[];
 }
@@ -59,12 +48,12 @@ const { players } = Astro.props as TableProps;
         >
             <tr>
                 <th scope="col" class="px-6 py-3">Name</th>
-                <th scope="col" class="px-6 py-3">Fantasy Position</th>
-                <th scope="col" class="px-6 py-3">Custom Position</th>
-                <th scope="col" class="px-6 py-3">Fantasy Points</th>
-                <th scope="col" class="px-6 py-3">Custom Points</th>
-                <th scope="col" class="px-6 py-3">Average Points</th>
-                <th scope="col" class="px-6 py-3">Last Position</th>
+                <th scope="col" class="px-6 py-3">Avatar</th>
+                <th scope="col" class="px-6 py-3">Position</th>
+                <th scope="col" class="px-6 py-3">Previous Position</th>
+                <th scope="col" class="px-6 py-3">Points</th>
+                <th scope="col" class="px-6 py-3">Team Points</th>
+                <th scope="col" class="px-6 py-3">Team Value</th>
             </tr>
         </thead>
         <tbody>

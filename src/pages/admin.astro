@@ -1,58 +1,9 @@
 ---
-import Layout from "../layouts/Layout.astro";
-// Disable prerendering for this page
 export const prerender = false;
+import Layout from "../layouts/Layout.astro";
+import AdminForm from "../components/admin/AdminForm";
 ---
 
 <Layout currentPage="admin">
-    <main class="flex-1 p-6">
-        <h1 class="text-2xl font-bold mb-4">Admin Page</h1>
-
-        <form id="saveTextForm" method="post">
-            <label for="text" class="block text-gray-300 mb-2"
-                >Enter Text:</label
-            >
-            <input
-                id="text"
-                name="text"
-                type="text"
-                class="w-full p-2 border rounded mb-4"
-                required
-            />
-            <button
-                type="submit"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-                Save Text
-            </button>
-        </form>
-    </main>
-
-    <script type="module">
-        import { actions } from "astro:actions";
-
-        document
-            .getElementById("saveTextForm")
-            ?.addEventListener("submit", async (event) => {
-                event.preventDefault();
-
-                const formData = new FormData(event.target);
-                const text = formData.get("text");
-
-                if (typeof text !== "string") return;
-
-                try {
-                    const { data, error } = await actions.saveText({
-                        text,
-                    });
-                    if (error) {
-                        alert("Error: " + error.message);
-                    } else {
-                        alert(data.message);
-                    }
-                } catch (err) {
-                    alert("Unexpected error occurred.");
-                }
-            });
-    </script>
+    <AdminForm client:visible />
 </Layout>

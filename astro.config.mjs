@@ -1,11 +1,11 @@
 import { defineConfig } from 'astro/config';
 
-import tailwind from '@astrojs/tailwind';
 import icon from "astro-icon";
+import tailwind from '@astrojs/tailwind';
 import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), icon(), preact()],
+  integrations: [icon(), tailwind(), preact()],
   output: "hybrid",
 });

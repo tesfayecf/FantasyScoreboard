@@ -1,13 +1,28 @@
 ---
+import { undefined } from "astro:schema";
+
+interface Manager {
+    id: string;
+    managerName: string;
+    avatar: string;
+}
+
+interface Team {
+    managerWarned: boolean;
+    id: string;
+    manager: Manager;
+    banned: boolean;
+    teamValue: number;
+    teamPoints: number;
+    teamMoney?: number | null;
+    isAdmin: boolean;
+}
+
 interface Player {
-    name: string;
-    imageUrl: string;
-    fantasyPosition: string;
-    customPosition: string;
-    fantasyPoints: number;
-    customPoints: number;
-    averagePoints: number;
-    lastPosition: number;
+    position: number;
+    previousPosition: number;
+    points: number;
+    team: Team;
 }
 
 interface RowProps {
@@ -20,23 +35,23 @@ const { player } = Astro.props as RowProps;
 <tr
     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
 >
-    <th
-        scope="row"
-        class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
+    <td
+        class="px-6 py-4 flex items-center text-gray-900 whitespace-nowrap dark:text-white"
     >
+        <div class="text-base font-semibold">
+            {player.team.manager.managerName}
+        </div>
+    </td>
+    <td class="px-6 py-4">
         <img
             class="w-10 h-10 rounded-full"
-            src={player.imageUrl}
-            alt={`${player.name} image`}
+            src={"https://ll1prglcdn.azureedge.net/global-avatar/default.png"}
+            alt={`${player.team.manager.managerName} avatar`}
         />
-        <div class="ps-3">
-            <div class="text-base font-semibold">{player.name}</div>
-        </div>
-    </th>
-    <td class="px-6 py-4">{player.fantasyPosition}</td>
-    <td class="px-6 py-4">{player.customPosition}</td>
-    <td class="px-6 py-4">{player.fantasyPoints}</td>
-    <td class="px-6 py-4">{player.customPoints}</td>
-    <td class="px-6 py-4">{player.averagePoints.toFixed(2)}</td>
-    <td class="px-6 py-4">{player.lastPosition}</td>
+    </td>
+    <td class="px-6 py-4">{player.position}</td>
+    <td class="px-6 py-4">{player.previousPosition}</td>
+    <td class="px-6 py-4">{player.points}</td>
+    <td class="px-6 py-4">{player.team.teamPoints}</td>
+    <td class="px-6 py-4">{player.team.teamValue.toLocaleString()}</td>
 </tr>
