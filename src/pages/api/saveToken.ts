@@ -1,7 +1,15 @@
 export const prerender = "false";
+import type { APIRoute } from "astro";
 
 import fs from "fs";
-import type { APIRoute } from "astro";
+
+
+function writeFile(path: string, contents: string, cb: fs.NoParamCallback) {
+    fs.mkdir("./src/data/auth/", { recursive: true }, function (err) {
+        if (err) return cb(err);
+        fs.writeFile(path, contents, cb);
+    });
+}
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -9,10 +17,7 @@ export const POST: APIRoute = async ({ request }) => {
         const formData = await request.formData();
         const token = formData.get("token");
 
-        fs.writeFile("./src/data/auth-token.txt", token as string, (err) => {
-            if (err) throw err;
-            console.log("Token saved successfully!");
-        })
+        writeFile("./src/data/auth/auth-token.txt", token as string, () => console.log("Token saved succesfully"));
 
         // Return a success response
         return new Response("Token saved successfully!", {

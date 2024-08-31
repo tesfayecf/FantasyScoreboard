@@ -2,13 +2,12 @@ import { defineConfig } from 'astro/config';
 
 import icon from "astro-icon";
 import tailwind from '@astrojs/tailwind';
-import preact from '@astrojs/preact';
 
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel/serverless';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [icon(), tailwind(), preact()],
+  integrations: [icon(), tailwind()],
   output: "hybrid",
   adapter: vercel(),
   outDir: "./dist"

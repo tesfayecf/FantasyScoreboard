@@ -1,36 +1,105 @@
-# My Astro Site
+# FantasyScoreboard
 
-Welcome to **My Astro Site**, a modern web application built using Astro. This site demonstrates dynamic functionality, including form handling and text storage using Astro Actions.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Setup](#setup)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Overview
-
-This project is a single-page web application that includes:
-- A dynamic admin page with a form for submitting text.
-- Backend functionality using Astro Actions to process form submissions and store data.
-- Navigation and layout components styled with Tailwind CSS.
+FantasyScoreboard is a modern web application built using Astro, designed to track fantasy sports scores in real-time.
 
 ## Features
 
-- **Dynamic Form Handling**: Submit text via a form on the admin page.
-- **Astro Actions**: Backend functionality to handle form submissions and data storage.
-- **Responsive Layout**: The site is fully responsive and includes a navigation bar.
-- **Custom Styling**: Styled with Tailwind CSS for a modern look.
+- Dynamic admin page with form submission functionality
+- Backend processing using Astro Actions
+- Responsive layout with a navigation bar
+- Custom styling using Tailwind CSS
+- Integration with a fantasy sports API
+
+## Tech Stack
+
+- Astro
+- Preact
+- Tailwind CSS
+- TypeScript
+- Vercel (for deployment)
 
 ## Setup
 
-To set up this project locally, follow these steps:
+1. Clone the repository:
 
-1. **Clone the Repository**
+```bash
+git clone https://github.com/your-username/fantasyscoreboard.git
+cd fantasyscoreboard
+```
 
-   ```bash
-   git clone https://github.com/your-username/my-astro-site.git
-   cd my-astro-site
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up your environment variables:
+
+Create a `.env` file in the root directory and add your API credentials and other necessary environment variables.
+
+4. Run the development server:
+
+```bash
+npm run dev
+```
+
+## Project Structure
+
+- `src/`: Source code
+  - `components/`: Reusable Astro components
+  - `layouts/`: Page layouts
+  - `pages/`: Astro pages
+  - `styles/`: Global CSS styles
+- `public/`: Static assets
+
+## API Integration
+
+The project is set up to integrate with a fantasy sports API. The base URL and endpoints are defined in the `index.astro` file:
+
+
+```7:17:src/pages/index.astro
+// Define the base URL and endpoint
+const baseUrl = "https://api-fantasy.llt-services.com";
+
+const leagueId = "013805954";
+const rankingEndpoint = `/api/v5/leagues/${leagueId}/ranking`;
+
+const teamId = "17193364";
+const teamInfoEndpoint = `/api/v3/leagues/${leagueId}/teams/${teamId}`;
+
+const weekId = "1";
+const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
+```
+
+
+## Deployment
+
+This project is configured for deployment on Vercel. The `astro.config.mjs` file includes the Vercel adapter:
+
+
+```1:15:astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+import icon from "astro-icon";
+import tailwind from '@astrojs/tailwind';
+import preact from '@astrojs/preact';
+
+import vercel from '@astrojs/vercel';
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [icon(), tailwind(), preact()],
+  output: "hybrid",
+  adapter: vercel(),
+  outDir: "./dist"
+});
+```
+
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
