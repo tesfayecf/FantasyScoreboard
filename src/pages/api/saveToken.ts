@@ -17,7 +17,14 @@ export const POST: APIRoute = async ({ request }) => {
         const formData = await request.formData();
         const token = formData.get("token");
 
-        writeFile("./src/data/auth/auth-token.txt", token as string, () => console.log("Token saved succesfully"));
+        // writeFile("./src/data/auth/auth-token.txt", token as string, () => console.log("Token saved succesfully"));
+        // Store the token in an environment variable
+        if (typeof token === "string") {
+            process.env.AUTH_TOKEN = token;
+            console.log("Token saved successfully in environment variable");
+        } else {
+            throw new Error("Token is not a valid string");
+        }
 
         // Return a success response
         return new Response("Token saved successfully!", {

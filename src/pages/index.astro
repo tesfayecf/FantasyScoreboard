@@ -1,5 +1,4 @@
 ---
-import fs from "fs";
 import Layout from "../layouts/Layout.astro";
 import Table from "../components/table/Table.astro";
 import data from "../data/dummy-users.json";
@@ -17,30 +16,31 @@ const weekId = "1";
 const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
 
 // Read the bearer token from the text file (assuming it's in the root directory)
-// const bearerToken = await fs.readFileSync("src/data/auth/auth-token.txt");
+const AUTH_TOKEN = process.env.AUTH_TOKEN;
 
 // Fetch the player data from the API
 let players: Player[] = [];
+if (AUTH_TOKEN !== "_undefined_") {
+    try {
+        const response = await fetch(`${baseUrl}${rankingEndpoint}`, {
+            headers: {
+                Authorization: `Bearer ${AUTH_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+        });
 
-// try {
-//     const response = await fetch(`${baseUrl}${rankingEndpoint}`, {
-//         headers: {
-//             Authorization: `Bearer ${bearerToken}`,
-//             "Content-Type": "application/json",
-//         },
-//     });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-//     if (!response.ok) {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-//     players = data || []; // Adjust this depending on the actual structure of your response
-// } catch (error) {
-//     console.error("Failed to fetch player data:", error);
-// }
+        const data = await response.json();
+        players = data || []; // Adjust this depending on the actual structure of your response
+    } catch (error) {
+        console.error("Failed to fetch player data:", error);
+    }
+}
 ---
 
 <Layout currentPage="index">
-    <Table players={data.players} />
+    <Table players={players} />
 </Layout>
