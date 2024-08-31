@@ -17,7 +17,7 @@ const weekId = "1";
 const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
 
 // Read the bearer token from the text file (assuming it's in the root directory)
-const bearerToken = await fs.readFileSync("src/data/auth/auth-token.txt");
+// const bearerToken = await fs.readFileSync("src/data/auth/auth-token.txt");
 
 // Fetch the player data from the API
 let players: Player[] = [];
