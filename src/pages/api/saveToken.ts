@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request }) => {
         const formData = await request.formData();
         const token = formData.get("token");
 
-        await fs.writeFile("./src/data/auth-token.txt", token as string, (err) => {
+        fs.writeFile("./src/data/auth-token.txt", token as string, (err) => {
             if (err) throw err;
             console.log("Token saved successfully!");
         })
