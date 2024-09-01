@@ -11,7 +11,7 @@ const LEAGUE_ID = "013805954";
 const TEAM_ID = "17193364"
 
 async function fetchRanking(token: string | null) {
-    if (token !== null && !import.meta.env.PROD) {
+    if (token !== null && import.meta.env.PROD) {
         try {
             const response = await fetch(`${BASE_URL}${endpoints.leagueRanking(LEAGUE_ID)}`, {
                 headers: {
