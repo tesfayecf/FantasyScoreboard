@@ -1,10 +1,7 @@
 export default async function storeAuthToken(token: string): Promise<boolean> {
     try {
-        if (process.env.production) {
-            return await storeAuthTokenInKV(token);
-        } else {
-            return await storeAuthTokenInFile(token);
-        }
+        if (import.meta.env.PROD) return await storeAuthTokenInKV(token);
+        else return await storeAuthTokenInFile(token);
     } catch (error) {
         console.error("Error in storeAuthToken:", error);
         return false;
@@ -15,8 +12,8 @@ async function storeAuthTokenInKV(token: string): Promise<boolean> {
     try {
         const { createClient } = await import("@vercel/kv");
         const kv = createClient({
-            url: process.env.KV_REST_API_URL!,
-            token: process.env.KV_REST_API_TOKEN!,
+            url: import.meta.env.KV_REST_API_URL!,
+            token: import.meta.env.KV_REST_API_TOKEN!,
         });
 
         await kv.set("auth-token", token);

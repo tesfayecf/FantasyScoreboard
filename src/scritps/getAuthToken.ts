@@ -1,10 +1,7 @@
 export default async function getAuthToken(): Promise<string | null> {
     try {
-        if (process.env.production) {
-            return await getAuthTokenFromKV();
-        } else {
-            return await getAuthTokenFromFile();
-        }
+        if (import.meta.env.PROD) return await getAuthTokenFromKV();
+        else return await getAuthTokenFromFile();
     } catch (error) {
         console.error("Error in getAuthToken:", error);
         return null;
@@ -15,11 +12,9 @@ async function getAuthTokenFromKV(): Promise<string | null> {
     try {
         const { createClient } = await import("@vercel/kv");
         const kv = createClient({
-            url: process.env.KV_REST_API_URL!,
-            token: process.env.KV_REST_API_TOKEN!,
+            url: import.meta.env.KV_REST_API_URL!,
+            token: import.meta.env.KV_REST_API_TOKEN!,
         });
-        console.log(process.env.KV_REST_API_URL)
-        console.log(process.env.KV_REST_API_TOKEN)
 
         const token = await kv.get("auth-token");
         if (typeof token === "string") {
