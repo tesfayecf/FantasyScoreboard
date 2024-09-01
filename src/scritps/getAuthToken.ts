@@ -18,6 +18,8 @@ async function getAuthTokenFromKV(): Promise<string | null> {
             url: process.env.KV_REST_API_URL!,
             token: process.env.KV_REST_API_TOKEN!,
         });
+        console.log(process.env.KV_REST_API_URL)
+        console.log(process.env.KV_REST_API_TOKEN)
 
         const token = await kv.get("auth-token");
         if (typeof token === "string") {

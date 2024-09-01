@@ -1,0 +1,11 @@
+---
+import getAuthToken from "../scritps/getAuthToken";
+
+const nodeEnv = process.env.production;
+const astroEnv = import.meta.env.PROD;
+
+const token = await getAuthToken();
+---
+<h1>node env {nodeEnv}</h1>
+<h1>astro env {nodeEnv}</h1>
+<h1>{token}</h1>
