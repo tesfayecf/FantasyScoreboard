@@ -1,17 +1,17 @@
 ---
 export const prerender = false;
 
-const LEAGUE_ID = "013805954";
-const TEAM_ID = "17193364"
-
 import Layout from "../layouts/Layout.astro";
 import Table from "../components/scoreboard/Table.astro";
 import data from "../data/players.json";
 import BASE_URL, { endpoints } from "../data/endpoints"
 import getAuthToken from "../scritps/getAuthToken"
 
+const LEAGUE_ID = "013805954";
+const TEAM_ID = "17193364"
+
 async function fetchRanking(token: string | null) {
-    if (token !== null && process.env.production) {
+    if (token !== null && !import.meta.env.PROD) {
         try {
             const response = await fetch(`${BASE_URL}${endpoints.leagueRanking(LEAGUE_ID)}`, {
                 headers: {
