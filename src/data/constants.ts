@@ -1,0 +1,1 @@
+export const AUTH_TOKEN_PATH = "./src/test/auth/auth-token.json"

@@ -1,53 +1,40 @@
 ---
-// import { kv } from "@vercel/kv";
 import { createClient } from "@vercel/kv";
 
+const LEAGUE_ID = "013805954";
+const TEAM_ID = "17193364"
+
 import Layout from "../layouts/Layout.astro";
-import Table from "../components/table/Table.astro";
-import data from "../data/dummy-users.json";
+import Table from "../components/scoreboard/Table.astro";
+import data from "../data/players.json";
+import BASE_URL, { endpoints } from "../data/endpoints"
+import getAuthToken from "../scritps/getAuthToken"
 
-// Define the base URL and endpoint
-const baseUrl = "https://api-fantasy.llt-services.com";
-const leagueId = "013805954";
-const rankingEndpoint = `/api/v5/leagues/${leagueId}/ranking`;
-const teamId = "17193364";
-const teamInfoEndpoint = `/api/v3/leagues/${leagueId}/teams/${teamId}`;
-const weekId = "1";
-const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
+async function fetchRanking(token: string | null) {
+    if (token !== null && process.env.production) {
+        try {
+            const response = await fetch(`${BASE_URL}${endpoints.leagueRanking(LEAGUE_ID)}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
-// Read the bearer token from the text file (assuming it's in the root directory)
-// const AUTH_TOKEN = process.env.AUTH_TOKEN;
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-let AUTH_TOKEN = null;
-if (process.env.production) {
-    const kv = createClient({
-        url: process.env.KV_REST_API_URL,
-        token: process.env.KV_REST_API_TOKEN,
-    });
-
-    AUTH_TOKEN = await kv.get(`auth-token`);
-}
-
-// Fetch the player data from the API
-let players: Player[] = data.players;
-if (AUTH_TOKEN !== null) {
-    try {
-        const response = await fetch(`${baseUrl}${rankingEndpoint}`, {
-            headers: {
-                Authorization: `Bearer ${AUTH_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const responseData = await response.json();
+            return responseData.players || responseData;
+        } catch (error) {
+            console.error("Failed to fetch players data:", error);
+            return data.players;
         }
-        const data = await response.json();
-        players = data || data.players; // Adjust this depending on the actual structure of your response
-    } catch (error) {
-        console.error("Failed to fetch player data:", error);
-    }
+    } else return [data.players[0]]
 }
+
+let AUTH_TOKEN: string | null = await getAuthToken();
+const players: Player[] = await fetchRanking(AUTH_TOKEN);
 ---
 
 <Layout currentPage="index">

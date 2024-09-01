@@ -1,6 +1,6 @@
 # build output
-dist/
 .vercel/
+
 # generated types
 .astro/
 
@@ -13,14 +13,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-
 # environment variables
 .env.*
 
-# macOS-specific files
-.DS_Store
-
-# jetbrains setting folder
-.idea/
-
-src/data/auth
+# test folders
+test
