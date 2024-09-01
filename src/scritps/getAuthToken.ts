@@ -15,11 +15,9 @@ async function getAuthTokenFromKV(): Promise<string | null> {
             url: import.meta.env.KV_REST_API_URL!,
             token: import.meta.env.KV_REST_API_TOKEN!,
         });
-
         const token = await kv.get("auth-token");
-        if (typeof token === "string") {
-            return token;
-        } else {
+        if (typeof token === "string") return token;
+        else {
             console.error("KV: Retrieved token is not a string");
             return null;
         }
@@ -36,9 +34,8 @@ async function getAuthTokenFromFile(): Promise<string | null> {
         const authToken = await fs.readFile(AUTH_TOKEN_PATH, "utf-8");
         const authTokenJson = JSON.parse(authToken);
 
-        if (typeof authTokenJson.token === 'string') {
-            return authTokenJson.token;
-        } else {
+        if (typeof authTokenJson.token === 'string') return authTokenJson.token;
+        else {
             console.error("File: Retrieved token is not a string");
             return null;
         }

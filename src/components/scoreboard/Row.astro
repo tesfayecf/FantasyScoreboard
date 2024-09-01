@@ -1,81 +1,101 @@
 ---
 interface RowProps {
-    player: Player;
+  player: Player;
 }
 
-const { player } = Astro.props as RowProps;
+const { player } = Astro.props;
+
+const getPositionColor = (position: number) => {
+  if (position === 1) return "bg-yellow-500";
+  if (position <= 3) return "bg-green-500";
+  if (position <= 10) return "bg-blue-500";
+  return "bg-gray-500";
+};
+
+const getPositionChange = (current: number, previous: number) => {
+  if (current < previous)
+    return { color: "text-green-400", icon: "M5 10l7-7m0 0l7 7m-7-7v18" };
+  if (current > previous)
+    return { color: "text-red-400", icon: "M15 10l-7 7m0 0l-7-7m7 7V2" };
+  return { color: "text-gray-400", icon: "M8 9l4-4 4 4m0 6l-4 4-4-4" };
+};
+
+const positionChange = getPositionChange(
+  player.position,
+  player.previousPosition
+);
 ---
 
-<!-- Example of a single row -->
-<tr class="bg-gray-900 border-b border-gray-700 hover:bg-gray-800">
-    <!-- Manager Name -->
-    <td class="px-6 py-4 flex items-center text-white whitespace-nowrap">
-        <div class="flex items-center space-x-3">
-            <span class="text-lg font-semibold">
-                {player.team.manager.managerName}
-            </span>
-        </div>
-    </td>
-
-    <!-- Manager Avatar -->
-    <td class="px-6 py-4">
-        <img
-            class="w-10 h-10 rounded-full shadow-lg border-2 border-gray-600"
-            src={player.team.manager.avatar}
-            alt={`${player.team.manager.managerName} avatar`}
-        />
-    </td>
-
-    <!-- Current Position with Badge -->
-    <td class="px-6 py-4">
-        <span
-            class={`px-3 py-1.5 rounded-full text-sm font-bold text-white ${player.position === 1 ? "bg-red-500" : "bg-gray-600"}`}
-        >
-            {player.position}
+<tr
+  class="bg-gray-900 border-b border-gray-700 hover:bg-gray-800 transition-colors duration-200"
+>
+  <!-- Manager Name -->
+  <td class="px-6 py-6 flex items-center text-white whitespace-nowrap">
+    <div class="flex items-center space-x-4">
+      <img
+        class="w-12 h-12 rounded-full shadow-lg border-2 border-blue-400"
+        src={player.team.manager.avatar}
+        alt={`${player.team.manager.managerName} avatar`}
+      />
+      <div>
+        <span class="text-xl font-bold">
+          {player.team.manager.managerName}
         </span>
-    </td>
+        <p class="text-sm text-gray-400">{player.team.teamName}</p>
+      </div>
+    </div>
+  </td>
 
-    <!-- Previous Position with Color-coded Arrow -->
-    <td class="px-6 py-4 text-gray-400">
-        <span class="flex items-center">
-            <svg
-                class={`w-5 h-5 mr-2 ${player.position < player.previousPosition ? "text-green-400" : "text-red-400"}`}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-            >
-                <path
-                    d={player.position < player.previousPosition
-                        ? "M5 10l7-7m0 0l7 7m-7-7v18"
-                        : "M15 10l-7 7m0 0l-7-7m7 7V2"}></path>
-            </svg>
-            <span class="text-sm font-medium">
-                {player.previousPosition}
-            </span>
-        </span>
-    </td>
+  <td class="px-6 py-6">
+    <div class="flex items-center">
+      <span
+        class={`px-2 py-1 rounded-full text-4xl font-bold text-white `}
+      >
+        {player.position}
+      </span>
+    </div>
+  </td>
 
-    <!-- Player Points -->
-    <td class="px-6 py-4">
-        <span
-            class="px-3 py-1.5 rounded-full bg-yellow-500 text-white text-sm font-bold"
-        >
-            {player.points}
-        </span>
-    </td>
+  <!-- IndusPoints -->
+  <td class="px-6 py-6">
+    <div class="flex flex-col items-center">
+      <span
+        class="px-4 py-2 rounded-full bg-yellow-500 text-gray-900 text-xl font-bold"
+      >
+        {player.points}
+      </span>
+    </div>
+  </td>
 
-    <!-- Team Points -->
-    <td class="px-6 py-4">
-        <span
-            class="px-3 py-1.5 rounded-full bg-purple-600 text-white text-sm font-bold"
-        >
-            {player.team.teamPoints}
-        </span>
-    </td>
+  <!-- Points -->
+  <td class="px-6 py-6">
+    <div class="flex flex-col items-center">
+      <span
+        class="px-4 py-2 rounded-full bg-yellow-500 text-gray-900 text-xl font-bold"
+      >
+        {player.points}
+      </span>
+    </div>
+  </td>
 
-    <!-- Team Value -->
-    <td class="px-6 py-4">
-        <span class="text-lg font-bold text-green-500">
-            ${player.team.teamValue.toLocaleString()}
-        </span>
-    </td>
+  <!-- Team Points -->
+  <td class="px-6 py-6">
+    <div class="flex flex-col items-center">
+      <span
+        class="px-4 py-2 rounded-full bg-purple-600 text-white text-xl font-bold"
+      >
+        {player.team.teamPoints}
+      </span>
+    </div>
+  </td>
+
+  <!-- Team Value -->
+  <td class="px-6 py-6">
+    <div class="flex flex-col items-center">
+      <span class="text-2xl font-bold text-green-400">
+        ${player.team.teamValue.toLocaleString()}
+      </span>
+      <span class="mt-2 text-sm font-medium text-gray-400">Team Value</span>
+    </div>
+  </td>
 </tr>

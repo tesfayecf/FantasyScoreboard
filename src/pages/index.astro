@@ -19,18 +19,14 @@ async function fetchRanking(token: string | null) {
                     "Content-Type": "application/json",
                 },
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
             const responseData = await response.json();
             return responseData.players || responseData;
         } catch (error) {
             console.error("Failed to fetch players data:", error);
             return data.players;
         }
-    } else return [data.players[0]]
+    } else return data.players;
 }
 
 let AUTH_TOKEN: string | null = await getAuthToken();
