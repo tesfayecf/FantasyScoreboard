@@ -12,7 +12,7 @@ const topThreePlayers = players.slice(0, 3);
 
 <div class="space-y-8">
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    {topThreePlayers.map((player) => <Card player={player} />)}
+    {players.map((player) => <Card player={player} />)}
   </div>
 
   <div class="relative overflow-x-auto shadow-md hidden md:block">
