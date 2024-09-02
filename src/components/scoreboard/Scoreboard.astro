@@ -1,0 +1,87 @@
+---
+import Row from "./Row.astro";
+import Card from "./Card.astro";
+
+interface TableProps {
+  players: IndusPlayer[];
+}
+
+const { players } = Astro.props as TableProps;
+const topThreePlayers = players.slice(0, 3);
+---
+
+<!-- <div class="space-y-8">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {players.map((player) => <Card player={player} />)}
+  </div>
+  <div class="bg-gray-900 text-white min-h-screen">
+    <div
+      class="container mx-auto px-4 py-8"
+    >
+      <div class="mb-4">
+        <input
+          type="text"
+          placeholder="Search for players"
+          class="w-full p-2 rounded bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+    </div>
+    <table
+      class="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
+    >
+      <thead
+        class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        <tr class="flex-col">
+          <th scope="col" class="px-4 py-3">Name</th>
+          <th scope="col" class="px-4 py-3">Position</th>
+          <th
+            scope="col"
+            class="px-4 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-red-600 text-transparent bg-clip-text"
+            >IndusPoints</th
+          >
+          <th scope="col" class="px-4 py-3">Points</th>
+          <th scope="col" class="px-4 py-3">Team Points</th>
+          <th scope="col" class="px-4 py-3">Team Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {players.map((player) => <Row player={player} />)}
+      </tbody>
+    </table>
+  </div>
+</div> -->
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-4">
+    <input
+      type="text"
+      placeholder="Search for players"
+      class="w-full p-2 rounded bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse table-auto hidden md:table">
+      <thead>
+        <tr class="bg-gray-800">
+          <th class="p-3 text-left">Name</th>
+          <th class="p-3 text-left">Position</th>
+          <th
+            class="p-3 text-left bg-gradient-to-r from-purple-500 via-pink-500 to-red-600 text-transparent bg-clip-text"
+            >IndusPoints</th
+          >
+          <th class="p-3 text-left">Points</th>
+          <th class="p-3 text-left">Team Points</th>
+          <th class="p-3 text-left">Team Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {players.map((player) => <Row player={player} />)}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 md:hidden">
+    {players.map((player) => <Card player={player} />)}
+  </div>
+</div>

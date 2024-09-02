@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import Layout from "../layouts/Layout.astro";
-import Table from "../components/scoreboard/Table.astro";
+import Scoreboard from "../components/scoreboard/Scoreboard.astro";
 import data from "../data/players.json";
 import BASE_URL, { endpoints } from "../data/endpoints";
 import getAuthToken from "../scritps/getAuthToken";
@@ -71,7 +71,7 @@ if (players === null) showBanner = true;
         <p>Warning: The authentication token is missing.</p>
       </div>
     ) : (
-      <Table players={players} />
+      <Scoreboard players={players} />
     )
   }
 </Layout>
