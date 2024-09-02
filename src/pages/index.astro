@@ -21,7 +21,7 @@ async function fetchRanking(): Promise<IndusPlayer[] | null> {
             if (AUTH_TOKEN !== null) {
                 try {
                     const response = await fetch(
-                        `${BASE_URL}${endpoints.leagueRankingByWeek(weekId, LEAGUE_ID)}`,
+                        `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, weekId)}`,
                         {
                             headers: {
                                 Authorization: `Bearer ${AUTH_TOKEN}`,
