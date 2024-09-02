@@ -6,7 +6,7 @@
         id="token"
         name="token"
         rows="4"
-        class="w-full p-3 border border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 text-gray-900 resize-none"
+        class="w-full p-3 border bg-[#121212] text-gray-200 border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 resize-none"
         placeholder="Enter your token"
         required></textarea>
     <button
@@ -29,9 +29,10 @@
                 method: "POST",
                 body: formData,
             })
-                .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
+                    // Redirect user to index page
+                    console.log("adfd");
+                    window.location.replace("./");
                 })
                 .catch((error) => {
                     console.error("Error:", error);

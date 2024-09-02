@@ -21,3 +21,8 @@ interface Player {
     points: number;
     team: Team;
 }
+
+interface IndusPlayer extends Player {
+    indusPoints: number;
+    indusPosition: number;
+}

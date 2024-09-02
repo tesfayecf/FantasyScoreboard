@@ -1,46 +1,77 @@
 ---
-import fs from "fs";
+export const prerender = false;
+
 import Layout from "../layouts/Layout.astro";
-import Table from "../components/table/Table.astro";
-import data from "../data/dummy-users.json";
+import Table from "../components/scoreboard/Table.astro";
+import data from "../data/players.json";
+import BASE_URL, { endpoints } from "../data/endpoints";
+import getAuthToken from "../scritps/getAuthToken";
 
-// Define the base URL and endpoint
-const baseUrl = "https://api-fantasy.llt-services.com";
+const NUM_WEEKS = 4;
+const LEAGUE_ID = "013805954";
+const TEAM_ID = "17193364";
+let AUTH_TOKEN: string | null = await getAuthToken();
+let showBanner = AUTH_TOKEN === null;
 
-const leagueId = "013805954";
-const rankingEndpoint = `/api/v5/leagues/${leagueId}/ranking`;
+async function fetchRanking(): Promise<IndusPlayer[] | null> {
+    const totalPoints: { [key: string]: number } = {};
+    let players: Player[] = [];
+    if (import.meta.env.PROD) {
+        for (let weekId = 1; weekId <= NUM_WEEKS; weekId++) {
+            if (AUTH_TOKEN !== null) {
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}${endpoints.leagueRankingByWeek(weekId, LEAGUE_ID)}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${AUTH_TOKEN}`,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+                    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                    const responseData = await response.json();
+                    players = responseData.players || responseData;
 
-const teamId = "17193364";
-const teamInfoEndpoint = `/api/v3/leagues/${leagueId}/teams/${teamId}`;
+                    players.forEach((player: Player, index: number) => {
+                        const points = index === 0 ? 5 : index === 1 ? 3 : index === 2 ? 1 : 0;
+                        totalPoints[player.team.id] = (totalPoints[player.team.id] || 0) + points;
+                    });
+                } catch (error) {
+                    console.error("Failed to fetch players data:", error);
+                    return null;
+                }
+            } else return null;
+        }
 
-const weekId = "1";
-const teamLineup = `/api/v4/teams/${teamId}/lineup/week/${weekId}`;
+        const indusPlayers: IndusPlayer[] = players.map((player, index) => ({
+            ...player,
+            indusPoints: totalPoints[player.team.id] || 0,
+            indusPosition: index,
+        }));
 
-// Read the bearer token from the text file (assuming it's in the root directory)
-// const bearerToken = await fs.readFileSync("src/data/auth/auth-token.txt");
+        indusPlayers.sort((a, b) => {
+            return a.indusPosition - b.indusPosition;
+        });
+        
+        return indusPlayers;
+    } else return data.players;
+}
 
-// Fetch the player data from the API
-let players: Player[] = [];
 
-// try {
-//     const response = await fetch(`${baseUrl}${rankingEndpoint}`, {
-//         headers: {
-//             Authorization: `Bearer ${bearerToken}`,
-//             "Content-Type": "application/json",
-//         },
-//     });
 
-//     if (!response.ok) {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-//     players = data || []; // Adjust this depending on the actual structure of your response
-// } catch (error) {
-//     console.error("Failed to fetch player data:", error);
-// }
+const players: IndusPlayer[] | null = await fetchRanking();
+if (players === null) showBanner = true;
 ---
 
 <Layout currentPage="index">
-    <Table players={data.players} />
+  {
+    showBanner ? (
+      <div class="bg-yellow-500 text-white p-4 text-center">
+        <p>Warning: The authentication token is missing.</p>
+      </div>
+    ) : (
+      <Table players={players} />
+    )
+  }
 </Layout>

@@ -1,15 +1,6 @@
 export const prerender = "false";
 import type { APIRoute } from "astro";
-
-import fs from "fs";
-
-
-function writeFile(path: string, contents: string, cb: fs.NoParamCallback) {
-    fs.mkdir("./src/data/auth/", { recursive: true }, function (err) {
-        if (err) return cb(err);
-        fs.writeFile(path, contents, cb);
-    });
-}
+import storeAuthToken from "../../scritps/storeAuthToken";
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -17,7 +8,16 @@ export const POST: APIRoute = async ({ request }) => {
         const formData = await request.formData();
         const token = formData.get("token");
 
-        writeFile("./src/data/auth/auth-token.txt", token as string, () => console.log("Token saved succesfully"));
+        // Check token is a string
+        if (typeof token !== "string") {
+            throw new Error("Token is not a valid string");
+        }
+
+        // Store token based on environment
+        const state = await storeAuthToken(token);
+        if (state === false)  {
+            throw new Error("Error storing token");
+        }
 
         // Return a success response
         return new Response("Token saved successfully!", {
