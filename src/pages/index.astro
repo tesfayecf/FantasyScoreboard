@@ -51,7 +51,7 @@ async function fetchRanking(): Promise<IndusPlayer[] | null> {
         }));
 
         indusPlayers.sort((a, b) => {
-            return a.indusPosition - b.indusPosition;
+            return b.indusPoints - a.indusPoints;
         });
         
         return indusPlayers;
