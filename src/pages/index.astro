@@ -4,35 +4,74 @@ export const prerender = false;
 import Layout from "../layouts/Layout.astro";
 import Table from "../components/scoreboard/Table.astro";
 import data from "../data/players.json";
-import BASE_URL, { endpoints } from "../data/endpoints"
-import getAuthToken from "../scritps/getAuthToken"
+import BASE_URL, { endpoints } from "../data/endpoints";
+import getAuthToken from "../scritps/getAuthToken";
 
+const NUM_WEEKS = 4;
 const LEAGUE_ID = "013805954";
-const TEAM_ID = "17193364"
+const TEAM_ID = "17193364";
+let AUTH_TOKEN: string | null = await getAuthToken();
+let showBanner = AUTH_TOKEN === null;
 
-async function fetchRanking(token: string | null) {
-    if (token !== null && import.meta.env.PROD) {
-        try {
-            const response = await fetch(`${BASE_URL}${endpoints.leagueRanking(LEAGUE_ID)}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-            const responseData = await response.json();
-            return responseData.players || responseData;
-        } catch (error) {
-            console.error("Failed to fetch players data:", error);
-            return data.players;
+async function fetchRanking(): Promise<IndusPlayer[] | null> {
+    const totalPoints: { [key: string]: number } = {};
+    let players: Player[] = [];
+    if (import.meta.env.PROD) {
+        for (let weekId = 1; weekId <= NUM_WEEKS; weekId++) {
+            if (AUTH_TOKEN !== null) {
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}${endpoints.leagueRankingByWeek(weekId, LEAGUE_ID)}`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${AUTH_TOKEN}`,
+                                "Content-Type": "application/json",
+                            },
+                        }
+                    );
+                    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                    const responseData = await response.json();
+                    players = responseData.players || responseData;
+
+                    players.forEach((player: Player, index: number) => {
+                        const points = index === 0 ? 5 : index === 1 ? 3 : index === 2 ? 1 : 0;
+                        totalPoints[player.team.id] = (totalPoints[player.team.id] || 0) + points;
+                    });
+                } catch (error) {
+                    console.error("Failed to fetch players data:", error);
+                    return null;
+                }
+            } else return null;
         }
+
+        const indusPlayers: IndusPlayer[] = players.map((player, index) => ({
+            ...player,
+            indusPoints: totalPoints[player.team.id] || 0,
+            indusPosition: index,
+        }));
+
+        indusPlayers.sort((a, b) => {
+            return a.indusPosition - b.indusPosition;
+        });
+        
+        return indusPlayers;
     } else return data.players;
 }
 
-let AUTH_TOKEN: string | null = await getAuthToken();
-const players: Player[] = await fetchRanking(AUTH_TOKEN);
+
+
+const players: IndusPlayer[] | null = await fetchRanking();
+if (players === null) showBanner = true;
 ---
 
 <Layout currentPage="index">
-    <Table players={players} />
+  {
+    showBanner ? (
+      <div class="bg-yellow-500 text-white p-4 text-center">
+        <p>Warning: The authentication token is missing.</p>
+      </div>
+    ) : (
+      <Table players={players} />
+    )
+  }
 </Layout>

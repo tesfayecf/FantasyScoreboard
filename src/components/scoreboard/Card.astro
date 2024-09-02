@@ -1,13 +1,13 @@
 ---
 interface CardProps {
-  player: Player;
+  player: IndusPlayer;
 }
 
 const { player } = Astro.props as CardProps;
-const ifFirst = player.position === 1;
+const ifFirst = player.indusPosition === 1;
 ---
 
-<div class={`max-w-sm p-6 bg-gradient-to-br from-white to-gray-100 rounded-lg shadow-lg dark:from-gray-800 dark:to-gray-900 ${ifFirst ? "border-2 border-blue-500" : "border border-gray-200 dark:border-gray-700"}`}>
+<div class={`w-full p-5 bg-gradient-to-br from-white to-gray-100 rounded-lg shadow-lg dark:from-gray-800 dark:to-gray-900 ${ifFirst ? "border-2 border-blue-500" : "border border-gray-200 dark:border-gray-700"}`}>
   <div class="flex items-center mb-6">
     <div class="relative">
       <img class="w-16 h-16 rounded-full mr-4 border-2 border-blue-500 shadow-md" src={player.team.manager.avatar} alt={`${player.team.manager.managerName} avatar`} />
@@ -53,7 +53,7 @@ const ifFirst = player.position === 1;
     </div>
     <div class="flex justify-between items-center">
         <span class="text-md font-medium bg-gradient-to-r from-purple-500 via-pink-500 to-red-600 text-transparent bg-clip-text">IndusPoints:</span>
-        <span class="text-lg font-bold text-green-600 dark:text-green-400">{player.points}</span>
+        <span class="text-lg font-bold text-green-600 dark:text-green-400">{player.indusPoints}</span>
       </div>
     <div class="flex justify-between items-center">
       <span class="text-md font-medium text-gray-700 dark:text-gray-300">Points:</span>

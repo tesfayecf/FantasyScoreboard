@@ -4,6 +4,8 @@
             "position": 1,
             "previousPosition": 2,
             "points": 120,
+            "indusPoints": 1,
+            "indusPosition": 3,
             "team": {
                 "managerWarned": false,
                 "id": "team1",
@@ -23,6 +25,8 @@
             "position": 2,
             "previousPosition": 1,
             "points": 115,
+            "indusPoints": 2,
+            "indusPosition": 5,
             "team": {
                 "managerWarned": true,
                 "id": "team2",
@@ -42,6 +46,8 @@
             "position": 3,
             "previousPosition": 4,
             "points": 110,
+            "indusPoints": 3,
+            "indusPosition": 7,
             "team": {
                 "managerWarned": false,
                 "id": "team3",
@@ -61,6 +67,8 @@
             "position": 4,
             "previousPosition": 3,
             "points": 105,
+            "indusPoints": 4,
+            "indusPosition": 9,
             "team": {
                 "managerWarned": true,
                 "id": "team4",
@@ -80,6 +88,8 @@
             "position": 5,
             "previousPosition": 5,
             "points": 100,
+            "indusPoints": 5,
+            "indusPosition": 3,
             "team": {
                 "managerWarned": false,
                 "id": "team5",

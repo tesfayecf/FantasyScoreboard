@@ -26,7 +26,7 @@ export const endpoints = {
     leagueNews: (leagueId: string = LEAGUE_ID) => `/api/v3/leagues/${leagueId}/news`,
     leagueNewsById: (weekId: string, leagueId: string = LEAGUE_ID) => `/api/v3/leagues/${leagueId}/news/${weekId}`,
     leagueRanking: (leagueId: string = LEAGUE_ID) => `/api/v5/leagues/${leagueId}/ranking`,
-    leagueRankingByWeek: (weekId: string, leagueId: string = LEAGUE_ID) => `/api/v4/leagues/${leagueId}/ranking/${weekId}`, // Error 404
+    leagueRankingByWeek: (weekId: number, leagueId: string = LEAGUE_ID) => `/api/v4/leagues/${leagueId}/ranking/${weekId}`, // Error 404
     
     // Market-related actions
     marketBid: (offerId: string, leagueId: string = LEAGUE_ID) => `/api/v3/league/${leagueId}/market/${offerId}/bid`,

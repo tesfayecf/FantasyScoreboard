@@ -3,7 +3,7 @@ import Row from "./Row.astro";
 import Card from "./Card.astro";
 
 interface TableProps {
-  players: Player[];
+  players: IndusPlayer[];
 }
 
 const { players } = Astro.props as TableProps;
@@ -15,7 +15,7 @@ const topThreePlayers = players.slice(0, 3);
     {topThreePlayers.map((player) => <Card player={player} />)}
   </div>
 
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+  <div class="relative overflow-x-auto shadow-md hidden md:block">
     <div
       class="flex items-center justify-between flex-col flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white dark:bg-gray-900"
     >
@@ -53,13 +53,13 @@ const topThreePlayers = players.slice(0, 3);
       <thead
         class="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
       >
-        <tr class="flex-col items-center">
+        <tr class="flex-col">
           <th scope="col" class="px-4 py-3">Name</th>
           <th scope="col" class="px-4 py-3">Position</th>
-          <th scope="col" class="px-4 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-red-600 text-transparent bg-clip-text text-center">IndusPoints</th>
-          <th scope="col" class="px-4 py-3 text-center">Points</th>
-          <th scope="col" class="px-4 py-3 text-center">Team Points</th>
-          <th scope="col" class="px-4 py-3 text-center">Team Value</th>
+          <th scope="col" class="px-4 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-red-600 text-transparent bg-clip-text ">IndusPoints</th>
+          <th scope="col" class="px-4 py-3">Points</th>
+          <th scope="col" class="px-4 py-3">Team Points</th>
+          <th scope="col" class="px-4 py-3">Team Value</th>
         </tr>
       </thead>
       <tbody>
