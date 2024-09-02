@@ -14,11 +14,11 @@ export const endpoints = {
     userFormations: `/v4/teams/lineup/formations`, // ?option=free
 
     // Team-related endpoints
-    teamsInfo: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/leagues/${leagueId}/teams/${teamId}`,
-    teamLineup: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/leagues/${leagueId}/teams/${teamId}/lineup`,
-    teamLineupByWeek: (teamId: string = TEAM_ID, weekId: string, leagueId: string = LEAGUE_ID) => `/api/v4/leagues/${leagueId}/teams/${teamId}/lineup/week/${weekId}`,
-    teamMoney: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/leagues/${leagueId}/teams/${teamId}/money`,
-    favouritePlayers: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/leagues/${leagueId}/teams/${teamId}/favourite-players`,
+    teamsInfo: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/teams/${teamId}`,
+    teamLineup: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/teams/${teamId}/lineup`,
+    teamLineupByWeek: (teamId: string = TEAM_ID, weekId: string, leagueId: string = LEAGUE_ID) => `/api/v3/teams/${teamId}/lineup/week/${weekId}`,
+    teamMoney: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/teams/${teamId}/money`,
+    favouritePlayers: (teamId: string = TEAM_ID, leagueId: string = LEAGUE_ID) => `/api/v3/teams/${teamId}/favourite-players`,
     
     // League types and configurations
     leagueMarket: (leagueId: string = LEAGUE_ID) => `/api/v3/league/${leagueId}/market`,
