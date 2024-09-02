@@ -4,7 +4,7 @@ interface CardProps {
 }
 
 const { player } = Astro.props as CardProps;
-const ifFirst = player.indusPosition === 1;
+const ifFirst = player.points === 1;
 ---
 
 <div class={`w-full p-5 bg-gradient-to-br from-white to-gray-100 rounded-lg shadow-lg dark:from-gray-800 dark:to-gray-900 ${ifFirst ? "border-2 border-blue-500" : "border border-gray-200 dark:border-gray-700"}`}>
