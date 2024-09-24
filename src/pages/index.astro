@@ -11,67 +11,85 @@ const NUM_WEEKS = 6;
 const LEAGUE_ID = "013805954";
 const TEAM_ID = "17193364";
 let AUTH_TOKEN: string | null = await getAuthToken();
-let showBanner = AUTH_TOKEN === null;
 
-async function fetchRanking(): Promise<IndusPlayer[] | null> {
-    const totalPoints: { [key: string]: number } = {};
+async function request(url: string) {
+    const response = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    return response.json();
+}
+
+async function computeRanking(): Promise<IndusPlayer[] | null> {
+    const ranking: { [key: string]: number } = {};
     let players: Player[] = [];
     if (import.meta.env.PROD) {
         for (let weekId = 1; weekId <= NUM_WEEKS; weekId++) {
-            if (AUTH_TOKEN !== null) {
-                try {
-                    const response = await fetch(
-                        `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, weekId)}`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${AUTH_TOKEN}`,
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
-                    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-                    const responseData = await response.json();
-                    players = responseData.players || responseData;
+            try {
+                const responseData = await request(
+                    `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, weekId)}`,
+                );
 
-                    players.forEach((player: Player, index: number) => {
-                        const points = index === 0 ? 5 : index === 1 ? 4 : index === 2 ? 3 : index === 3 ? 2 : index === 4 ? 1 : 0;
-                        totalPoints[player.team.id] = (totalPoints[player.team.id] || 0) + points;
-                    });
-                } catch (error) {
-                    console.error("Failed to fetch players data:", error);
-                    return null;
-                }
-            } else return null;
+                players = responseData.players || responseData;
+
+                players.forEach((player: Player, index: number) => {
+                    const points =
+                        index === 0 // If first place, add 5 points
+                            ? 5
+                            : index === 1 // If second place, add 4 points
+                              ? 4
+                              : index === 2 // If third place, add 3 points
+                                ? 3
+                                : index === 3 // If fourth place, add 2 points
+                                  ? 2
+                                  : index === 4 // If fifth place, add 1 point
+                                    ? 1
+                                    : index === players.length - 1 // If last place, add 1 point
+                                      ? 1
+                                      : 0; // Otherwise, add 0 points
+                    ranking[player.team.id] =
+                        (ranking[player.team.id] || 0) + points;
+                });
+            } catch (error) {
+                console.error("Failed to fetch players data:", error);
+                return null;
+            }
         }
 
         const indusPlayers: IndusPlayer[] = players.map((player, index) => ({
             ...player,
-            indusPoints: totalPoints[player.team.id] || 0,
+            indusPoints: ranking[player.team.id] || 0,
             indusPosition: index,
         }));
 
         indusPlayers.sort((a, b) => {
             return b.indusPoints - a.indusPoints;
         });
-        
+
         return indusPlayers;
     } else return data.players;
 }
 
-
-
-const players: IndusPlayer[] | null = await fetchRanking();
-if (players === null) showBanner = true;
+let showBanner = AUTH_TOKEN === null;
+var ranking: IndusPlayer[] | null = null;
+if (AUTH_TOKEN !== null) {
+    // Compute ranking
+    ranking = await computeRanking();
+    if (ranking === null) showBanner = true;
+}
 ---
 
 <Layout currentPage="index">
-  {
-    showBanner ? (
-      <div class="bg-yellow-500 text-white p-4 text-center">
-        <p>Warning: The authentication token is missing.</p>
-      </div>
-    ) : (
-      <Scoreboard players={players} />
-    )
-  }
+    {
+        showBanner ? (
+            <div class="bg-yellow-500 text-white p-4 text-center">
+                <p>Warning: The authentication token is missing.</p>
+            </div>
+        ) : (
+            <Scoreboard players={ranking} />
+        )
+    }
 </Layout>
