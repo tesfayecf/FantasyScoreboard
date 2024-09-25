@@ -5,33 +5,56 @@ interface CardProps {
 
 const { player } = Astro.props as CardProps;
 const ifFirst = player.position === 1;
+const ifSecond = player.position === 2;
+const ifThird = player.position === 3;
 ---
 
-<div class="bg-gray-800 p-4 rounded-lg shadow">
+<div class="bg-gray-800 p-6 rounded-lg shadow-lg">
   <div class="relative">
-    {ifFirst && (
-      <span class="absolute -top-2 -right-2 bg-yellow-400 text-xs font-bold px-2 py-1 rounded-full shadow-sm">1st</span>
-    )}
+    {
+      ifFirst && (
+        <span class="absolute -top-3 -left-7 bg-gradient-to-r from-yellow-400 to-yellow-500 text-xs font-bold px-4 py-2 rounded-full shadow-lg transform -rotate-12">
+          {ifFirst ? "1st" : ""}
+        </span>
+      )
+    }
   </div>
-  <div class="flex items-center space-x-3 mb-3">
-    <img
-      src={player.team.manager.avatar}
-      alt={`${player.team.manager.managerName} avatar`}
-      class="w-10 h-10 rounded-full"
-    />
-    <div class="font-bold">{player.team.manager.managerName}</div>
+
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-4">
+      <img
+        src={player.team.manager.avatar}
+        alt={`${player.team.manager.managerName} avatar`}
+        class="w-12 h-12 rounded-full border-2 border-gray-700"
+      />
+      <div class="text-lg font-extrabold text-white">
+        {player.team.manager.managerName}
+      </div>
+    </div>
+    <div class="text-xl font-bold text-green-400">
+      ${player.team.teamValue.toLocaleString()}
+      <div class="text-sm font-normal text-gray-400">Team Value</div>
+    </div>
   </div>
-  <div class="grid grid-cols-2 gap-2 text-sm">
-    <div>Position: <span class="font-semibold">{player.position}</span></div>
+
+  <div class="grid grid-cols-2 gap-6 text-center text-white">
     <div>
-      IndusPoints: <span class="font-semibold text-purple-400">{player.indusPoints}</span>
+      <span class="text-2xl font-bold text-purple-400"
+        >{player.indusPoints}</span
+      >
+      <div class="text-sm mt-1">IndusPoints</div>
     </div>
-    <div>Points: <span class="font-semibold">{player.points}</span></div>
     <div>
-      Team Points: <span class="font-semibold text-purple-400">{player.team.teamPoints}</span>
+      <span class="text-2xl font-bold">{player.team.teamPoints}</span>
+      <div class="text-sm mt-1">Team Points</div>
     </div>
-    <div class="col-span-2">
-      Team Value: <span class="font-semibold text-green-400">${player.team.teamValue.toLocaleString()}</span>
+    <div>
+      <span class="text-2xl font-bold">{player.position}</span>
+      <div class="text-sm mt-1">Week Position</div>
+    </div>
+    <div>
+      <span class="text-2xl font-bold">{player.points}</span>
+      <div class="text-sm mt-1">Week Points</div>
     </div>
   </div>
 </div>

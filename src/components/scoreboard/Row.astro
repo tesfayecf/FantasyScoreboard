@@ -22,7 +22,7 @@ const getPositionChange = (current: number, previous: number) => {
 
 const positionChange = getPositionChange(
   player.position,
-  player.previousPosition
+  player.previousPosition,
 );
 ---
 
@@ -40,9 +40,9 @@ const positionChange = getPositionChange(
       <p class="text-xs text-gray-400">{player.team.teamName}</p>
     </div>
   </td>
-  <td class="p-3">{player.position}</td>
   <td class="p-3 text-purple-400">{player.indusPoints}</td>
+  <td class="p-3">{player.position}</td>
   <td class="p-3">{player.points}</td>
-  <td class="p-3 text-purple-400">{player.team.teamPoints}</td>
+  <td class="p-3">{player.team.teamPoints}</td>
   <td class="p-3 text-green-400">${player.team.teamValue.toLocaleString()}</td>
 </tr>
