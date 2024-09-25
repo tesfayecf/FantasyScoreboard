@@ -3,83 +3,117 @@ export const prerender = false;
 
 import Layout from "../layouts/Layout.astro";
 import Scoreboard from "../components/scoreboard/Scoreboard.astro";
-import data from "../data/players.json";
 import BASE_URL, { endpoints } from "../data/endpoints";
-import getAuthToken from "../scritps/getAuthToken";
+import { DataManager } from "../managers/data";
 
-const NUM_WEEKS = 6;
+const NUM_WEEKS = 34;
 const LEAGUE_ID = "013805954";
 const TEAM_ID = "17193364";
-let AUTH_TOKEN: string | null = await getAuthToken();
+const dataManager = new DataManager();
+await dataManager.connect();
+await dataManager.init();
 
-async function request(url: string) {
-    const response = await fetch(url, {
-        headers: {
-            Authorization: `Bearer ${AUTH_TOKEN}`,
-            "Content-Type": "application/json",
-        },
-    });
-    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-    return response.json();
+async function getActiveWeeks() {
+    try {
+        const appConfig = await dataManager.get<ConfigList>(
+            `${BASE_URL}${endpoints.appConfig}`,
+        );
+        if (appConfig === null) {
+            throw new Error("Failed to fetch app config data");
+        }
+        // Find config for active weeks
+        const activeConfig = appConfig.find(
+            (config) => config.name === "active_weeks",
+        );
+
+        if (activeConfig === undefined) {
+            throw new Error("Failed to find active weeks config");
+        }
+
+        if (activeConfig.value === undefined) {
+            throw new Error("Active weeks config is undefined");
+        }
+
+        // Get number of active weeks
+        const activeWeeks = (activeConfig.value as number[]).length;
+        return activeWeeks;
+    } catch (error) {
+        console.error("Failed to fetch app config data:", error);
+        return null;
+    }
 }
 
 async function computeRanking(): Promise<IndusPlayer[] | null> {
     const ranking: { [key: string]: number } = {};
-    let players: Player[] = [];
-    if (import.meta.env.PROD) {
-        for (let weekId = 1; weekId <= NUM_WEEKS; weekId++) {
-            try {
-                const responseData = await request(
-                    `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, weekId)}`,
-                );
+    // Get active weeks
+    const activeWeeks = await getActiveWeeks();
+    if (activeWeeks === null) {
+        console.error("Failed to get active weeks");
+        return null;
+    }
 
-                players = responseData.players || responseData;
+    try {
+        // Loop through each week
+        for (let weekId = 1; weekId <= activeWeeks; weekId++) {
+            // Get week ranking
+            const weekRanking = await dataManager.get<Player[]>(
+                `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, weekId)}`,
+            );
 
-                players.forEach((player: Player, index: number) => {
-                    const points =
-                        index === 0 // If first place, add 5 points
-                            ? 5
-                            : index === 1 // If second place, add 4 points
-                              ? 4
-                              : index === 2 // If third place, add 3 points
-                                ? 3
-                                : index === 3 // If fourth place, add 2 points
-                                  ? 2
-                                  : index === 4 // If fifth place, add 1 point
-                                    ? 1
-                                    : index === players.length - 1 // If last place, add 1 point
-                                      ? 1
-                                      : 0; // Otherwise, add 0 points
-                    ranking[player.team.id] =
-                        (ranking[player.team.id] || 0) + points;
-                });
-            } catch (error) {
-                console.error("Failed to fetch players data:", error);
-                return null;
+            // Check data is not null
+            if (weekRanking === null) {
+                throw new Error("Failed to fetch week ranking data");
             }
-        }
 
-        const indusPlayers: IndusPlayer[] = players.map((player, index) => ({
+            weekRanking.forEach((player: Player, index: number) => {
+                const points =
+                    index === 0 // If first place, add 5 points
+                        ? 5
+                        : index === 1 // If second place, add 4 points
+                          ? 4
+                          : index === 2 // If third place, add 3 points
+                            ? 3
+                            : index === 3 // If fourth place, add 2 points
+                              ? 2
+                              : index === 4 // If fifth place, add 1 point
+                                ? 1
+                                : index === weekRanking.length - 1 // If last place, add 1 point
+                                  ? 1
+                                  : 0; // Otherwise, add 0 points
+                ranking[player.team.id] =
+                    (ranking[player.team.id] || 0) + points;
+            });
+        }
+    } catch (error) {
+        console.error("Failed to fetch players data:", error);
+        return null;
+    }
+
+    // Get last week ranking
+    const lastWeekRanking = await dataManager.get<Player[]>(
+        `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, activeWeeks)}`,
+    );
+    if (lastWeekRanking === null) {
+        throw new Error("Failed to fetch last week ranking data");
+    }
+
+    // Compile data and sort
+    const indusPlayers: IndusPlayer[] = lastWeekRanking
+        .map((player, index) => ({
             ...player,
             indusPoints: ranking[player.team.id] || 0,
             indusPosition: index,
-        }));
-
-        indusPlayers.sort((a, b) => {
+        }))
+        .sort((a, b) => {
             return b.indusPoints - a.indusPoints;
         });
 
-        return indusPlayers;
-    } else return data.players;
+    return indusPlayers;
 }
 
-let showBanner = AUTH_TOKEN === null;
-var ranking: IndusPlayer[] | null = null;
-if (AUTH_TOKEN !== null) {
-    // Compute ranking
-    ranking = await computeRanking();
-    if (ranking === null) showBanner = true;
-}
+let showBanner = true;
+var ranking: IndusPlayer[] | null = await computeRanking();
+if (ranking !== null) showBanner = false;
 ---
 
 <Layout currentPage="index">

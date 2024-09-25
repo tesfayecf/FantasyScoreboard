@@ -1,6 +1,6 @@
 export const prerender = "false";
 import type { APIRoute } from "astro";
-import storeAuthToken from "../../scritps/storeAuthToken";
+import { DataManager } from "../../managers/data";
 
 export const POST: APIRoute = async ({ request }) => {
     try {
@@ -13,10 +13,13 @@ export const POST: APIRoute = async ({ request }) => {
             throw new Error("Token is not a valid string");
         }
 
-        // Store token based on environment
-        const state = await storeAuthToken(token);
-        if (state === false)  {
-            throw new Error("Error storing token");
+        // Save token
+        const dataManager = new DataManager();
+        await dataManager.connect();
+        await dataManager.init();
+        const success = await dataManager.setAuthToken(token);
+        if (success === false) {
+            throw new Error("Error saving token");
         }
 
         // Return a success response

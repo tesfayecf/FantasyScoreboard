@@ -2,15 +2,10 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Start Redis",
+            "label": "redis",
             "type": "shell",
-            "command": "redis-server",
-            "problemMatcher": [],
-            "isBackground": true,
-            "presentation": {
-                "reveal": "always",
-                "panel": "dedicated"
-            }
+            "command": "\"C:/Program Files/Redis/redis-server.exe\"",
+            "isBackground": true
         }
     ]
 }
