@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         // Save token
-        const dataManager = new DataManager();
+        const dataManager = new DataManager(5*60*1000);
         await dataManager.connect();
         await dataManager.init();
         const success = await dataManager.setAuthToken(token);
