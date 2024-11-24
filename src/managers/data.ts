@@ -17,8 +17,11 @@ export class DataManager {
     private redisClient: any | null = null;
     private PROD: boolean = import.meta.env.PROD;
     private requestManager: RequestManager | null = null;
+    private cacheTime: number;
 
-    constructor() { }
+    constructor(cacheTime: number) {
+        this.cacheTime = cacheTime;
+    }
 
     public async connect(): Promise<void> {
         if (this.PROD) {
@@ -78,7 +81,7 @@ export class DataManager {
                 return (await this.get(endpoint)) as T;
             }
             const { timestamp, data: dataValue } = data;
-            if (timestamp + 60 * 1000 < Date.now()) {
+            if (timestamp + this.cacheTime < Date.now()) {
                 await this.update(endpoint);
                 return (await this.get(endpoint)) as T;
             }
@@ -92,7 +95,7 @@ export class DataManager {
                 return (await this.get(endpoint)) as T;
             }
             const { timestamp, data: dataValue } = JSON.parse(data) as { timestamp: number, data: T };
-            if (timestamp + 60 * 1000 < Date.now()) {
+            if (timestamp + this.cacheTime < Date.now()) {
                 await this.update(endpoint);
                 return (await this.get(endpoint)) as T;
             }

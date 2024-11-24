@@ -5,15 +5,15 @@ import Layout from "../layouts/Layout.astro";
 import Scoreboard from "../components/scoreboard/Scoreboard.astro";
 import BASE_URL, { endpoints } from "../data/endpoints";
 import { DataManager } from "../managers/data";
+import type { ConfigList, IndusPlayer, Player } from "../types/api";
 
-const NUM_WEEKS = 34;
 const LEAGUE_ID = "013805954";
 const TEAM_ID = "17193364";
-const dataManager = new DataManager();
+const dataManager = new DataManager(5 * 60 * 1000);
 await dataManager.connect();
 await dataManager.init();
 
-async function getActiveWeeks() {
+async function getWeeks() {
     try {
         const appConfig = await dataManager.get<ConfigList>(
             `${BASE_URL}${endpoints.appConfig}`,
@@ -35,7 +35,7 @@ async function getActiveWeeks() {
         }
 
         // Get number of active weeks
-        const activeWeeks = (activeConfig.value as number[]).length;
+        const activeWeeks = activeConfig.value as number[];
         return activeWeeks;
     } catch (error) {
         console.error("Failed to fetch app config data:", error);
@@ -46,7 +46,7 @@ async function getActiveWeeks() {
 async function computeRanking(): Promise<IndusPlayer[] | null> {
     const ranking: { [key: string]: number } = {};
     // Get active weeks
-    const activeWeeks = await getActiveWeeks();
+    const activeWeeks = await getWeeks();
     if (activeWeeks === null) {
         console.error("Failed to get active weeks");
         return null;
@@ -54,7 +54,8 @@ async function computeRanking(): Promise<IndusPlayer[] | null> {
 
     try {
         // Loop through each week
-        for (let weekId = 1; weekId <= activeWeeks; weekId++) {
+        for (let j = 0; j < activeWeeks.length; j++) {
+            const weekId = activeWeeks[j];
             // Get week ranking
             const weekRanking = await dataManager.get<Player[]>(
                 `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, weekId)}`,
@@ -91,7 +92,7 @@ async function computeRanking(): Promise<IndusPlayer[] | null> {
 
     // Get last week ranking
     const lastWeekRanking = await dataManager.get<Player[]>(
-        `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, activeWeeks)}`,
+        `${BASE_URL}${endpoints.leagueRankingByWeek(LEAGUE_ID, activeWeeks[activeWeeks.length - 1])}`,
     );
     if (lastWeekRanking === null) {
         throw new Error("Failed to fetch last week ranking data");
