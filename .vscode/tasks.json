@@ -3,6 +3,10 @@
     "tasks": [
         {
             "label": "redis",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "type": "shell",
             "command": "\"C:/Program Files/Redis/redis-server.exe\"",
             "isBackground": true

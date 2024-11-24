@@ -1,0 +1,286 @@
+---
+import BASE_URL, { endpoints } from "../../data/endpoints";
+import type {
+    MarketPlayer,
+    PlayerData,
+    PlayerStats,
+    MarketValue,
+} from "../../types/api";
+import { DataManager } from "../../managers/data";
+
+interface CardProps {
+    marketPlayer: MarketPlayer;
+}
+
+const { marketPlayer } = Astro.props as CardProps;
+
+// Initialize DataManager and fetch data
+const dataManager = new DataManager(5 * 60 * 1000);
+await dataManager.connect();
+await dataManager.init();
+
+async function getPlayerData(playerId: string) {
+    try {
+        const playerStats = await dataManager.get<PlayerStats>(
+            `${BASE_URL}${endpoints.playerStats(playerId)}`,
+        );
+        const playerMarketValue = await dataManager.get<MarketValue[]>(
+            `${BASE_URL}${endpoints.playerMarketValue(playerId)}`,
+        );
+
+        if (!playerStats || !playerMarketValue) {
+            throw new Error("Failed to fetch player data");
+        }
+
+        return { stats: playerStats, marketValueHistory: playerMarketValue };
+    } catch (error) {
+        console.error("Error fetching player data:", error);
+        return null;
+    }
+}
+
+const calculatePointsPerMillion = (playerData: PlayerData) => {
+    if (playerData.stats.marketValue > 0) {
+        return (
+            playerData.stats.points /
+            (playerData.stats.marketValue / 1000000)
+        ).toFixed(2);
+    }
+    return "N/A";
+};
+
+const calculateValueTrend = (playerData: PlayerData) => {
+    const recentValues = playerData.marketValueHistory.slice(-5);
+    let trend = 0;
+    for (let i = 1; i < recentValues.length; i++) {
+        if (recentValues[i].marketValue > recentValues[i - 1].marketValue) {
+            trend++;
+        } else if (
+            recentValues[i].marketValue < recentValues[i - 1].marketValue
+        ) {
+            trend--;
+        }
+    }
+    return trend > 0 ? "Increasing" : trend < 0 ? "Decreasing" : "Stable";
+};
+
+const playerData: PlayerData | null = await getPlayerData(
+    marketPlayer!.playerMaster.id,
+);
+let showBanner = false;
+if (playerData === null) {
+    showBanner = true;
+    return;
+}
+
+const latestMarketValue = playerData.marketValueHistory[playerData.marketValueHistory.length - 1];
+const oldestMarketValue = playerData.marketValueHistory[0];
+const valueChange = latestMarketValue.marketValue - oldestMarketValue.marketValue;
+const valueChangePercentage = ((valueChange / oldestMarketValue.marketValue) * 100).toFixed(2);
+const pointsPerMillion = calculatePointsPerMillion(playerData);
+const valueTrend = calculateValueTrend(playerData);
+const maxValue = Math.max(...playerData.marketValueHistory.map((e) => e.marketValue),);
+const minValue = Math.min(...playerData.marketValueHistory.map((e) => e.marketValue),);
+---
+
+{
+    showBanner ? (
+        <div class="bg-red-600 text-white p-4 rounded-lg shadow-md text-center">
+            <p class="font-bold">Data Unavailable</p>
+            <p>
+                We are unable to retrieve the player's data at the moment.
+                Please try again later.
+            </p>
+        </div>
+    ) : (
+        <div class="bg-gray-900 rounded-xl shadow-2xl overflow-hidden max-w-2xl mx-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <img
+                            src={
+                                playerData!.stats.images.transparent["256x256"]
+                            }
+                            alt={`${playerData!.stats.name} avatar`}
+                            class="w-20 h-20 rounded-full border-4 border-gray-700 object-cover"
+                        />
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">
+                                {playerData!.stats.name}
+                            </h2>
+                            <p class="text-gray-400">
+                                {playerData!.stats.position} -{" "}
+                                {playerData!.stats.team.name}
+                            </p>
+                            <div class="flex items-center mt-1">
+                                <img
+                                    src={playerData!.stats.team.badgeColor}
+                                    alt={`${playerData!.stats.team.name} badge`}
+                                    class="w-6 h-6 mr-2"
+                                />
+                                <span class="text-gray-300">
+                                    {playerData!.stats.playerStatus}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-400">Market Value</span>
+                        </div>
+                        <div class="text-2xl font-bold text-white">
+                            ${playerData!.stats.marketValue.toLocaleString()}
+                        </div>
+                        <div
+                            class={`text-sm ${valueChange >= 0 ? "text-green-400" : "text-red-400"} flex items-center mt-1`}
+                        >
+                            {valueChange >= 0 ? (
+                                <span class="mr-1 text-green-400 inline-block align-middle">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        class="w-4 h-4"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                        />
+                                    </svg>
+                                </span>
+                            ) : (
+                                <span class="mr-1 text-red-400 inline-block align-middle">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        class="w-4 h-4"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                                        />
+                                    </svg>
+                                </span>
+                            )}
+                            {valueChangePercentage}%
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-gray-400">Total Bids</span>
+                            <span class="text-blue-400 inline-block align-middle">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    class="w-4 h-4"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 10-12 0v1z"
+                                    />
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="text-2xl font-bold text-white">
+                            {latestMarketValue.bids}
+                        </div>
+                        <div class="text-sm text-gray-400 mt-1">
+                            Last Update
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-4 rounded-lg mb-6">
+                    <h3 class="text-lg font-semibold text-white mb-4">
+                        Value Metrics
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">
+                                Points per Million €
+                            </div>
+                            <div class="text-xl font-bold text-white">
+                                {pointsPerMillion}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">
+                                Value Trend
+                            </div>
+                            <div class="text-xl font-bold text-white">
+                                {valueTrend}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">
+                                Total Points
+                            </div>
+                            <div class="text-xl font-bold text-white">
+                                {playerData!.stats.points}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">
+                                Avg. Points
+                            </div>
+                            <div class="text-xl font-bold text-white">
+                                {playerData!.stats.averagePoints.toFixed(2)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-white mb-4">
+                        Market Value History
+                    </h3>
+                    <div class="relative h-40 bg-gray-700 rounded-lg overflow-hidden">
+                        <div class="absolute inset-0 flex items-end">
+                            {playerData!.marketValueHistory.map(
+                                (entry, index) => {
+                                    const barHeight =
+                                        ((entry.marketValue - minValue) /
+                                            (maxValue - minValue)) *
+                                        100;
+                                    return (
+                                        <div
+                                            class="flex-1 bg-green-400 transition-all duration-300 ease-in-out"
+                                            style={{ height: `${barHeight}%` }}
+                                            title={`${new Date(entry.date).toLocaleDateString()}: $${entry.marketValue.toLocaleString()}`}
+                                        />
+                                    );
+                                },
+                            )}
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-2 text-xs text-gray-400">
+                        <span>
+                            {new Date(
+                                oldestMarketValue.date,
+                            ).toLocaleDateString()}
+                        </span>
+                        <span>
+                            {new Date(
+                                latestMarketValue.date,
+                            ).toLocaleDateString()}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
