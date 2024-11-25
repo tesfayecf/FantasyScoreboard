@@ -26,51 +26,17 @@ async function getMarket() {
     }
 }
 
-async function getPlayerData(playerId: string) {
-    try {
-        const playerStats = await dataManager.get<any>(
-            `${BASE_URL}${endpoints.playerStats(playerId)}`,
-        );
-        if (playerStats === null) {
-            throw new Error("Failed to fetch player stats");
-        }
-        const playerMarketValue = await dataManager.get<any>(
-            `${BASE_URL}${endpoints.playerMarketValue(playerId)}`,
-        );
-        if (playerMarketValue === null) {
-            throw new Error("Failed to fetch player market value");
-        }
-
-        const playerData = {
-            stats: playerStats,
-            marketValue: playerMarketValue,
-        };
-        return playerData;
-    } catch (error) {
-        console.error("Failed to fetch player data:", error);
-        return null;
-    }
-}
-
 let showBanner = true;
 const market = await getMarket();
 if (market !== null) showBanner = false;
 ---
 
-<Layout currentPage="activity">
-    {
-        showBanner ? (
-            <div class="bg-yellow-500 text-white p-4 text-center">
-                <p>Warning: The authentication token is missing.</p>
-            </div>
-        ) : (
-            <div class="container mx-auto px-4 py-8">
-                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
-                    {market!.map((player) => (
-                        <Card marketPlayer={player} />
-                    ))}
-                </div>
-            </div>
-        )
-    }
+<Layout currentPage="Market">
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+            {market!.map((player) => (
+                <Card marketPlayer={player} />
+            ))}
+        </div>
+    </div>
 </Layout>
